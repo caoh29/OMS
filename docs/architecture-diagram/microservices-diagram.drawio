@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="28.0.6">
   <diagram name="Page-1" id="9mKA3ghaUm_8dy2mrEUt">
-    <mxGraphModel dx="1665" dy="743" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2339" math="0" shadow="0">
+    <mxGraphModel dx="1358" dy="708" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2339" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -181,11 +181,8 @@
         <mxCell id="v40oaSbYFe39OrbgkEy_-17" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;&quot;&gt;SERVICE COMMUNICATION&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#6c8ebf;fillColor=#dae8fc;" parent="v40oaSbYFe39OrbgkEy_-9" vertex="1">
           <mxGeometry x="125" y="218" width="220" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="ulrNdj17T0uwtlCz0OL2-31" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.mq;" parent="v40oaSbYFe39OrbgkEy_-9" vertex="1">
-          <mxGeometry x="197" y="480" width="78" height="78" as="geometry" />
-        </mxCell>
-        <mxCell id="ulrNdj17T0uwtlCz0OL2-32" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b&gt;Async communication (MQ)&lt;br&gt;Spring AMQP (RabbitMQ)&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="v40oaSbYFe39OrbgkEy_-9" vertex="1">
-          <mxGeometry x="125" y="558" width="220" height="50" as="geometry" />
+        <mxCell id="ulrNdj17T0uwtlCz0OL2-32" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b&gt;Async communication&lt;br&gt;Spring Apache Kafka&amp;nbsp;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="v40oaSbYFe39OrbgkEy_-9" vertex="1">
+          <mxGeometry x="145" y="558" width="180" height="50" as="geometry" />
         </mxCell>
         <mxCell id="ulrNdj17T0uwtlCz0OL2-54" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/compute/Azure_Spring_Cloud.svg;" parent="v40oaSbYFe39OrbgkEy_-9" vertex="1">
           <mxGeometry x="207" y="318" width="68" height="68" as="geometry" />
@@ -239,6 +236,9 @@
         </mxCell>
         <mxCell id="v40oaSbYFe39OrbgkEy_-75" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b&gt;Failover Service&lt;br&gt;Spring Cloud Circuit Breaker&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="v40oaSbYFe39OrbgkEy_-9" vertex="1">
           <mxGeometry x="1136" y="966" width="230" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="4x4J-JbgXhnB5drOO6AE-2" value="" style="points=[];aspect=fixed;html=1;align=center;shadow=0;dashed=0;fillColor=#FF6A00;strokeColor=none;shape=mxgraph.alibaba_cloud.kafka;" vertex="1" parent="v40oaSbYFe39OrbgkEy_-9">
+          <mxGeometry x="206.6500000000001" y="497" width="56.699999999999996" height="42" as="geometry" />
         </mxCell>
         <mxCell id="v40oaSbYFe39OrbgkEy_-7" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b&gt;SERVICE LAYER&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#6c8ebf;fillColor=#dae8fc;" parent="v40oaSbYFe39OrbgkEy_-13" vertex="1">
           <mxGeometry x="660" width="140" height="30" as="geometry" />
