@@ -1,6 +1,0 @@
-services:
-  user:
-    url: http://localhost:8080/api
-
-  product:
-    url: http://localhost:8081/api
