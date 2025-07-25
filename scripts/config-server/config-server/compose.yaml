@@ -1,0 +1,14 @@
+services:
+  config-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8888:8888"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
