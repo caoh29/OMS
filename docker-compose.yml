@@ -1,7 +1,9 @@
+version: '3.8'
+
 services:
   config-server:
     build:
-      context: .
+      context: ./scripts/config-server/config-server
       dockerfile: Dockerfile
     restart: always
     ports:
