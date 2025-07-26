@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>caoh29.OMS</groupId>
-	<artifactId>config-server</artifactId>
+	<artifactId>service-discovery-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>config-server</name>
-	<description>Config server for Order Managament System Project</description>
+	<name>service-discovery-server</name>
+	<description>Service Discovery server (Eureka) for Order Management System Project</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -33,12 +33,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-config-server</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
 		</dependency>
 
 		<dependency>
