@@ -3,7 +3,7 @@ version: '3.8'
 services:
   eureka-server:
     build:
-      context: ./scripts/service-discovery-server/service-discovery-server
+      context: ./services/service-discovery-server/service-discovery-server
       dockerfile: Dockerfile
     restart: always
     environment:
@@ -26,7 +26,7 @@ services:
       eureka-server:
         condition: service_healthy
     build:
-      context: ./scripts/config-server/config-server
+      context: ./services/config-server/config-server
       dockerfile: Dockerfile
     restart: always
     environment:
