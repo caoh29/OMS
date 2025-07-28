@@ -38,6 +38,59 @@ services:
       - "8888:8888"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  
+  auth-server:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      pg-db:
+        condition: service_started
+    build:
+      context: ./services/auth-server/auth-server
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.config.import=configserver:http://config-server:8888
+      - spring.application.name=auth-server
+      - server.port=8090
+    ports:
+      - "8090:8090"
+    networks:
+      - backend
+
+  pg-db:
+    image: postgres:15
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=camilo
+      - POSTGRES_PASSWORD=camilo123
+      - POSTGRES_DB=oms_db
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+  
+  # rabbitmq:
+  #   image: rabbitmq:4-management
+  #   restart: always
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=camilo
+  #     - RABBITMQ_DEFAULT_PASS=camilo123
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   networks:
+  #     - backend
 
 networks:
   backend:

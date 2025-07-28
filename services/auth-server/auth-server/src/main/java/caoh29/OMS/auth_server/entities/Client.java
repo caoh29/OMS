@@ -11,11 +11,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-@Table(name = "`user`")
-public class User {
+@Table(name = "`client`")
+public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
     private String username;

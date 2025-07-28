@@ -5,6 +5,6 @@ import caoh29.OMS.auth_server.entities.Client;
 import java.util.List;
 
 
-public interface IUserService {
+public interface IClientService {
     List<Client> findAll();
 }

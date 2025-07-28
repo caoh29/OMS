@@ -1,34 +1,27 @@
 package caoh29.OMS.auth_server.services;
 
 import caoh29.OMS.auth_server.entities.Client;
-import caoh29.OMS.auth_server.repositories.UserRepository;
+import caoh29.OMS.auth_server.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-//public class UserService implements IUserService, AuthenticationConverter {
-public class UserService implements IUserService, AuthenticationProvider {
-
+//public class ClientService implements IClientService, AuthenticationConverter {
+public class ClientService implements IClientService, AuthenticationProvider {
     @Autowired
-    private UserRepository userRepository;
-
+    private ClientRepository clientRepository;
 
     @Override
     public List<Client> findAll() {
-        GsonJsonParser jsonParser = new GsonJsonParser();
-        ArrayList<Client> clients = new ArrayList<>();
-        this.userRepository.findAll().forEach(clients::add);
-        return clients;
+        return this.clientRepository.findAll();
     }
 
     @Override
@@ -36,19 +29,19 @@ public class UserService implements IUserService, AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        Optional<Client> userOptional = this.userRepository.findAll().stream()
+        Optional<Client> clientOptional = this.clientRepository.findAll().stream()
                 .filter(client -> client.getUsername().equalsIgnoreCase(username))
                 .findFirst();
 
-        if (userOptional.isEmpty()) {
+        if (clientOptional.isEmpty()) {
             return null;
         }
 
-        Client client = userOptional.get();
+        Client client = clientOptional.get();
 
         if (password.matches(client.getPassword())) {
             return UsernamePasswordAuthenticationToken.authenticated(
-                    client,
+                client,
                 client.getPassword(),
                 Collections.emptyList()
             );

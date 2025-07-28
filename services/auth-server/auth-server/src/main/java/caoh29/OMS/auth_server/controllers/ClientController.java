@@ -1,35 +1,21 @@
 package caoh29.OMS.auth_server.controllers;
 
 import caoh29.OMS.auth_server.entities.Client;
-import caoh29.OMS.auth_server.services.IUserService;
+import caoh29.OMS.auth_server.services.IClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
-public class UserController {
+@RestController
+public class ClientController {
     @Autowired
-    private IUserService userService;
+    private IClientService clientService;
 
-    @GetMapping("/auth/users")
-    public List<Client> getUsers() {
-        return this.userService.findAll();
+    @GetMapping("/clients")
+    public List<Client> getClients() {
+        return this.clientService.findAll();
     }
-
-//    @GetMapping("/auth/user")
-//    public User getUserByEmail(
-//            @RequestParam(name = "email")
-//            String email
-//    ) {
-//        return this.userService.findByEmail(email)
-//                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-//    }
-
-//    @GetMapping("/auth/login")
-//    public String login() {
-//        return "login"; // This should return the name of the login view
-//    }
 
 }
