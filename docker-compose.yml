@@ -61,6 +61,9 @@ services:
       - spring.config.import=configserver:http://config-server:8888
       - spring.application.name=auth-server
       - server.port=8090
+      - jwt.secret=i08ep89jl5buXxRhWar2nq3lut/ar/1TsuttlTI2OXo=
+      - application.security.jwt.expiration=3600
+      - application.security.jwt.refresh-token.expiration=86400
     ports:
       - "8090:8090"
     networks:

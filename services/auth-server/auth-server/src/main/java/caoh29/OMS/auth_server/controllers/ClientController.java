@@ -1,19 +1,21 @@
 package caoh29.OMS.auth_server.controllers;
 
 import caoh29.OMS.auth_server.entities.Client;
-import caoh29.OMS.auth_server.services.IClientService;
+import caoh29.OMS.auth_server.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/clients")
 public class ClientController {
     @Autowired
-    private IClientService clientService;
+    private ClientService clientService;
 
-    @GetMapping("/clients")
+    @GetMapping()
     public List<Client> getClients() {
         return this.clientService.findAll();
     }

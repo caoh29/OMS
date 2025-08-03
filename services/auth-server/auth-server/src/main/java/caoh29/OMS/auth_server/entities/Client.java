@@ -2,56 +2,63 @@ package caoh29.OMS.auth_server.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
-@Entity
-//@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
+@Entity
 @Table(name = "`client`")
-public class Client {
+public class Client implements UserDetails {
 
     @Id
-    @Column(name = "id", columnDefinition = "uuid", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(unique = true)
     private String username;
     private String password;
+    @Column(unique = true)
     private String email;
     private String phoneNumber;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    // Getters and Setters
-    public String getUsername() {
-        return username;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+//        return true;
     }
 
-    public String getPassword() {
-        return password;
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+//        return true;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+//        return true;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+//        return true;
     }
 }
