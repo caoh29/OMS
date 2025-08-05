@@ -44,8 +44,14 @@ public class JwtService {
     }
 
     public Claims getAllClaims(String token) {
-        return Jwts.claims().build();
+        return Jwts
+                .parser()
+                .verifyWith(this.getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
+
 
     private <T> T getClaim(String token, Function<Claims, T> resolver) {
         Claims claims = this.getAllClaims(token);

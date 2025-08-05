@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClientService implements UserDetailsService {
@@ -23,12 +24,12 @@ public class ClientService implements UserDetailsService {
         this.clientRepository.save(client);
     }
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return this.clientRepository.findAll().stream()
-                .filter(client -> client.getUsername().equalsIgnoreCase(username))
-                .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("Client not found with username: " + username));
+        Optional<Client> clientOptional = this.clientRepository.findByUsername(username);
+        if (clientOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Client not found with username: " + username);
+        }
+        return clientOptional.get();
     }
 }

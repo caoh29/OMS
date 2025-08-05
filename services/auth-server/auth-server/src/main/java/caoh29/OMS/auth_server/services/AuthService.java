@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 public class AuthService {
@@ -32,10 +35,18 @@ public class AuthService {
             return ResponseEntity.badRequest().body("Username and password must not be empty");
         }
 
+        UserDetails userDetails = this.clientService.loadUserByUsername(request.getUsername());
+
+        if (Objects.equals(userDetails.getUsername(), request.getUsername())) {
+            return ResponseEntity.badRequest().body("Username already exists");
+        }
+
         Client client = Client.builder()
                 .username(request.getUsername())
                 .password(this.passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .role(request.getRole())
                 .build();
 
         this.clientService.save(client);
@@ -50,20 +61,19 @@ public class AuthService {
             return ResponseEntity.badRequest().body("Username and password must not be empty");
         }
 
-        this.authenticationManager.authenticate(
+        Authentication authentication = this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
         );
 
-        UserDetails userDetails = this.clientService.loadUserByUsername(request.getUsername());
 
-        if (userDetails == null) {
+        if (!authentication.isAuthenticated()) {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
 
-        String token = this.jwtService.generateTokenWithUsername(userDetails.getUsername());
+        String token = this.jwtService.generateTokenWithUsername(request.getUsername());
 
         return ResponseEntity.ok(token);
     }

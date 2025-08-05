@@ -13,21 +13,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 public class AuthController {
-    private final AuthService authService;
+    @Autowired
+    private AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(
-            @RequestBody RegisterDTO request
+            @RequestBody RegisterDTO clientRegisterDTO
     ) {
-        return this.authService.register(request);
+        return this.authService.register(clientRegisterDTO);
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<String> authenticate(
-            @RequestBody AuthenticateDTO request
+            @RequestBody AuthenticateDTO clientAuthenticateDTO
     ) {
-        return this.authService.authenticate(request);
+        return this.authService.authenticate(clientAuthenticateDTO);
     }
 }

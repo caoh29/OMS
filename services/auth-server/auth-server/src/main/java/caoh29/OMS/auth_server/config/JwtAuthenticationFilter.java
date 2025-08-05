@@ -19,10 +19,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
-    private final ClientService clientService;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private ClientService clientService;
 
     @Override
     protected void doFilterInternal(
@@ -35,41 +36,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         // Get auth header
         String authHeader = request.getHeader("Authorization");
-
-        // Check if auth header is null or does not start with "Bearer "
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response); // just skip
-            return;
-        }
-
-        // Extract JWT token from auth header
-        String jwtToken = authHeader.substring(7);
-        // Get username from JWT token
-        String username = jwtService.getUsernameClaim(jwtToken);
-
-
-        // If username is not null, not blank, not empty, and no authentication exists in the security context
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Load user details by username from Database
-            UserDetails userDetails = this.clientService.loadUserByUsername(username);
-
-            // If user details are not null and the JWT token contains valid claims
-            if (this.jwtService.isVerifiedToken(jwtToken, userDetails)) {
-
-                // Create an authentication token
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-
-                // Set details for the authentication token
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-
-                // Set the authentication token in the security context
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+        // Check if auth header is not null or does start with "Bearer "
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            // Extract JWT token from auth header
+            String jwtToken = authHeader.substring(7);
+            // Get username from JWT token
+            String username = this.jwtService.getUsernameClaim(jwtToken);
+            // If username is not null, not blank, not empty, and no authentication exists in the security context
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // Load user details by username from Database
+                UserDetails userDetails = this.clientService.loadUserByUsername(username);
+                // If user details are not null and the JWT token contains valid claims
+                if (this.jwtService.isVerifiedToken(jwtToken, userDetails)) {
+                    // Create an authentication token
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    // Set details for the authentication token
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // Set the authentication token in the security context
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
         }
 
