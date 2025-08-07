@@ -51,7 +51,7 @@ services:
         condition: service_healthy
       config-server:
         condition: service_healthy
-      pg-db:
+      auth-db-pg:
         condition: service_started
     image: quay.io/keycloak/keycloak:26.3.2
     restart: always
@@ -64,7 +64,7 @@ services:
       - KC_METRICS_ENABLED=true
       # - KC_DB=dev-mem
       - KC_DB=postgres
-      - KC_DB_URL=jdbc:postgresql://pg-db:5432/oms_db
+      - KC_DB_URL=jdbc:postgresql://auth-db-pg:5432/oms_db
       - KC_DB_USERNAME=camilo
       - KC_DB_PASSWORD=camilo123
       # - KC_HOSTNAME=auth-server-keycloak
@@ -76,7 +76,7 @@ services:
     networks:
       - backend
 
-  pg-db:
+  auth-db-pg:
     image: postgres:15
     restart: always
     volumes:
@@ -87,6 +87,44 @@ services:
       - POSTGRES_DB=oms_db
     ports:
       - "5432:5432"
+    networks:
+      - backend
+
+  api-gateway:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    build:
+      context: ./services/api-gateway/api-gateway
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=api-gateway
+      # - server.port=8080 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+  order-service:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    build:
+      context: ./services/order-service/order-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=order-service
+      # - server.port=3000 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "3000:3000"
     networks:
       - backend
   
