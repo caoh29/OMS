@@ -45,7 +45,7 @@ services:
       retries: 5
       start_period: 10s
   
-  auth-server:
+  auth-server-keycloak:
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -53,19 +53,26 @@ services:
         condition: service_healthy
       pg-db:
         condition: service_started
-    build:
-      context: ./services/auth-server/auth-server
-      dockerfile: Dockerfile
+    image: quay.io/keycloak/keycloak:26.3.2
     restart: always
+    # command: start-dev
+    command: start --hostname=http://localhost:8090 --http-enabled=true --http-port=8443
     environment:
-      - spring.config.import=configserver:http://config-server:8888
-      - spring.application.name=auth-server
-      - server.port=8090
-      - jwt.secret=i08ep89jl5buXxRhWar2nq3lut/ar/1TsuttlTI2OXo=
-      - application.security.jwt.expiration=3600
-      - application.security.jwt.refresh-token.expiration=86400
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KC_HEALTH_ENABLED=true
+      - KC_METRICS_ENABLED=true
+      # - KC_DB=dev-mem
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://pg-db:5432/oms_db
+      - KC_DB_USERNAME=camilo
+      - KC_DB_PASSWORD=camilo123
+      # - KC_HOSTNAME=auth-server-keycloak
+
     ports:
-      - "8090:8090"
+      # - "8080:8080"
+      - "8090:8443"
+      - "9000:9000"
     networks:
       - backend
 
