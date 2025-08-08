@@ -127,6 +127,25 @@ services:
       - "3000:3000"
     networks:
       - backend
+
+  product-service:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    build:
+      context: ./services/product-service/product-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=product-service
+      # - server.port=3000 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "3001:3001"
+    networks:
+      - backend
   
   # rabbitmq:
   #   image: rabbitmq:4-management
