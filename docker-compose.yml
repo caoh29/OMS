@@ -45,31 +45,37 @@ services:
       retries: 5
       start_period: 10s
   
-  auth-server:
+  auth-server-keycloak:
     depends_on:
       eureka-server:
         condition: service_healthy
       config-server:
         condition: service_healthy
-      pg-db:
+      auth-db-pg:
         condition: service_started
-    build:
-      context: ./services/auth-server/auth-server
-      dockerfile: Dockerfile
+    image: quay.io/keycloak/keycloak:26.3.2
     restart: always
+    command: start-dev --hostname=http://auth-server-keycloak:8443 --http-enabled=true --http-port=8443
     environment:
-      - spring.config.import=configserver:http://config-server:8888
-      - spring.application.name=auth-server
-      - server.port=8090
-      - jwt.secret=i08ep89jl5buXxRhWar2nq3lut/ar/1TsuttlTI2OXo=
-      - application.security.jwt.expiration=3600
-      - application.security.jwt.refresh-token.expiration=86400
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KC_HEALTH_ENABLED=true
+      - KC_METRICS_ENABLED=true
+      # - KC_DB=dev-mem
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://auth-db-pg:5432/oms_db
+      - KC_DB_USERNAME=camilo
+      - KC_DB_PASSWORD=camilo123
+      # - KC_HOSTNAME=auth-server-keycloak
+
     ports:
-      - "8090:8090"
+      # - "8080:8080"
+      - "8443:8443"
+      - "9000:9000"
     networks:
       - backend
 
-  pg-db:
+  auth-db-pg:
     image: postgres:15
     restart: always
     volumes:
@@ -80,6 +86,63 @@ services:
       - POSTGRES_DB=oms_db
     ports:
       - "5432:5432"
+    networks:
+      - backend
+
+  api-gateway:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    build:
+      context: ./services/api-gateway/api-gateway
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=api-gateway
+      # - server.port=8080 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+  order-service:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    build:
+      context: ./services/order-service/order-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=order-service
+      # - server.port=3000 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+
+  product-service:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    build:
+      context: ./services/product-service/product-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=product-service
+      # - server.port=3000 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "3001:3001"
     networks:
       - backend
   
