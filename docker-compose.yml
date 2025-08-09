@@ -55,8 +55,7 @@ services:
         condition: service_started
     image: quay.io/keycloak/keycloak:26.3.2
     restart: always
-    # command: start-dev
-    command: start --hostname=http://localhost:8090 --http-enabled=true --http-port=8443
+    command: start-dev --hostname=http://auth-server-keycloak:8443 --http-enabled=true --http-port=8443
     environment:
       - KC_BOOTSTRAP_ADMIN_USERNAME=admin
       - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
@@ -71,7 +70,7 @@ services:
 
     ports:
       # - "8080:8080"
-      - "8090:8443"
+      - "8443:8443"
       - "9000:9000"
     networks:
       - backend
