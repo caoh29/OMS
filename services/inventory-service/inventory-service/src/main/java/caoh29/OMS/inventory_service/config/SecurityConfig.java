@@ -1,4 +1,4 @@
-package caoh29.OMS.api_gateway.config;
+package caoh29.OMS.inventory_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,13 +11,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/product-catalog/**").permitAll() // Allow public access to product endpoints
-                        .anyRequest().authenticated()) // Secure all other requests
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .build();
-        // .csrf().disable() // Disable CSRF for simplicity, consider enabling in
-        // production
-        // .httpBasic(); // Use basic authentication
     }
 }

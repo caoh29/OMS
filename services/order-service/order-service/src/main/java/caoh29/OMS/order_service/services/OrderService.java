@@ -11,6 +11,7 @@ public class OrderService {
     public List<Order> getOrders() {
         ArrayList<Order> list = new ArrayList<>();
         list.add(new Order(
+                "sa15da321",
                 "1",
                 2,
                 "John Doe",
@@ -18,6 +19,7 @@ public class OrderService {
                 "PENDING"
         ));
         list.add(new Order(
+                "ld59oq770",
                 "2",
                 6,
                 "Daniel Smith",

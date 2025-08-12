@@ -126,22 +126,41 @@ services:
     networks:
       - backend
 
-  product-service:
+  product-catalog-service:
     depends_on:
       eureka-server:
         condition: service_healthy
       config-server:
         condition: service_healthy
     build:
-      context: ./services/product-service/product-service
+      context: ./services/product-catalog-service/product-catalog-service
       dockerfile: Dockerfile
     restart: always
     environment:
-      - spring.application.name=product-service
+      - spring.application.name=product-catalog-service
       # - server.port=3000 # This is not needed
       - spring.config.import=configserver:http://config-server:8888
     ports:
       - "3001:3001"
+    networks:
+      - backend
+  
+  inventory-service:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    build:
+      context: ./services/inventory-service/inventory-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=inventory-service
+      # - server.port=3002 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "3002:3002"
     networks:
       - backend
   
