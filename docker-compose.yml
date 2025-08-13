@@ -66,13 +66,18 @@ services:
       - KC_DB_URL=jdbc:postgresql://auth-db-pg:5432/oms_db
       - KC_DB_USERNAME=camilo
       - KC_DB_PASSWORD=camilo123
-
     ports:
       # - "8080:8080"
       - "8443:8443"
       - "9000:9000"
     networks:
       - backend
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:9000/health/ready"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 10s
 
   auth-db-pg:
     image: postgres:15
@@ -113,6 +118,10 @@ services:
         condition: service_healthy
       config-server:
         condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
+      product-catalog-service:
+        condition: service_healthy
     build:
       context: ./services/order-service/order-service
       dockerfile: Dockerfile
@@ -144,6 +153,12 @@ services:
       - "3001:3001"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   
   inventory-service:
     depends_on:
