@@ -49,8 +49,6 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
-      config-server:
-        condition: service_healthy
       auth-db-pg:
         condition: service_started
     image: quay.io/keycloak/keycloak:26.3.2
@@ -99,6 +97,8 @@ services:
         condition: service_healthy
       config-server:
         condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
     build:
       context: ./services/api-gateway/api-gateway
       dockerfile: Dockerfile
@@ -111,6 +111,12 @@ services:
       - "8080:8080"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   order-service:
     depends_on:
@@ -120,7 +126,11 @@ services:
         condition: service_healthy
       auth-server-keycloak:
         condition: service_started
+      api-gateway:
+        condition: service_healthy
       product-catalog-service:
+        condition: service_healthy
+      inventory-service:
         condition: service_healthy
     build:
       context: ./services/order-service/order-service
@@ -140,6 +150,10 @@ services:
       eureka-server:
         condition: service_healthy
       config-server:
+        condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
+      api-gateway:
         condition: service_healthy
     build:
       context: ./services/product-catalog-service/product-catalog-service
@@ -166,6 +180,10 @@ services:
         condition: service_healthy
       config-server:
         condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
+      api-gateway:
+        condition: service_healthy
     build:
       context: ./services/inventory-service/inventory-service
       dockerfile: Dockerfile
@@ -178,6 +196,12 @@ services:
       - "3002:3002"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   
   # rabbitmq:
   #   image: rabbitmq:4-management

@@ -13,6 +13,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/product-catalog/**").permitAll() // Allow public access to product endpoints
+                        .requestMatchers("/actuator/**").permitAll() // Allow access to actuator endpoints
                         .anyRequest().authenticated()) // Secure all other requests
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .build();
