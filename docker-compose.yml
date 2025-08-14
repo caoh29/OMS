@@ -49,8 +49,6 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
-      config-server:
-        condition: service_healthy
       auth-db-pg:
         condition: service_started
     image: quay.io/keycloak/keycloak:26.3.2
@@ -66,14 +64,18 @@ services:
       - KC_DB_URL=jdbc:postgresql://auth-db-pg:5432/oms_db
       - KC_DB_USERNAME=camilo
       - KC_DB_PASSWORD=camilo123
-      # - KC_HOSTNAME=auth-server-keycloak
-
     ports:
       # - "8080:8080"
       - "8443:8443"
       - "9000:9000"
     networks:
       - backend
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:9000/health/ready"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 10s
 
   auth-db-pg:
     image: postgres:15
@@ -95,6 +97,8 @@ services:
         condition: service_healthy
       config-server:
         condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
     build:
       context: ./services/api-gateway/api-gateway
       dockerfile: Dockerfile
@@ -107,12 +111,26 @@ services:
       - "8080:8080"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   order-service:
     depends_on:
       eureka-server:
         condition: service_healthy
       config-server:
+        condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
+      api-gateway:
+        condition: service_healthy
+      product-catalog-service:
+        condition: service_healthy
+      inventory-service:
         condition: service_healthy
     build:
       context: ./services/order-service/order-service
@@ -127,24 +145,63 @@ services:
     networks:
       - backend
 
-  product-service:
+  product-catalog-service:
     depends_on:
       eureka-server:
         condition: service_healthy
       config-server:
         condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
+      api-gateway:
+        condition: service_healthy
     build:
-      context: ./services/product-service/product-service
+      context: ./services/product-catalog-service/product-catalog-service
       dockerfile: Dockerfile
     restart: always
     environment:
-      - spring.application.name=product-service
+      - spring.application.name=product-catalog-service
       # - server.port=3000 # This is not needed
       - spring.config.import=configserver:http://config-server:8888
     ports:
       - "3001:3001"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  
+  inventory-service:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
+      api-gateway:
+        condition: service_healthy
+    build:
+      context: ./services/inventory-service/inventory-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=inventory-service
+      # - server.port=3002 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "3002:3002"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   
   # rabbitmq:
   #   image: rabbitmq:4-management

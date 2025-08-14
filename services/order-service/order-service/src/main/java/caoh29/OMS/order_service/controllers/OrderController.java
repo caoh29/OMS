@@ -3,9 +3,7 @@ package caoh29.OMS.order_service.controllers;
 import caoh29.OMS.order_service.entities.Order;
 import caoh29.OMS.order_service.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,8 +13,17 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping()
+    @GetMapping("/")
     public List<Order> getOrders() {
-        return this.orderService.getOrders();
+        return orderService.getOrders();
+    }
+
+    // This should be a POST endpoint but for demo purposes it is a GET endpoint
+    @GetMapping("/place-order")
+    public String placeOrder(
+            @RequestParam String sku,
+            @RequestParam Integer quantity
+    ) {
+        return orderService.placeOrder(sku, quantity);
     }
 }

@@ -13,14 +13,21 @@ public class Routes {
     @Bean
     public RouterFunction<ServerResponse> orderRoutes() {
         return GatewayRouterFunctions.route("order_service")
-                .route(RequestPredicates.path("/api/order"), HandlerFunctions.http("http://order-service:3000"))
+                .route(RequestPredicates.path("/api/order/**"), HandlerFunctions.http("http://order-service:3000"))
                 .build();
     }
 
     @Bean
-    public RouterFunction<ServerResponse> productRoutes() {
-        return GatewayRouterFunctions.route("product_service")
-                .route(RequestPredicates.path("/api/product"), HandlerFunctions.http("http://product-service:3001"))
+    public RouterFunction<ServerResponse> productCatalogRoutes() {
+        return GatewayRouterFunctions.route("product_catalog_service")
+                .route(RequestPredicates.path("/api/product-catalog/**"), HandlerFunctions.http("http://product-catalog-service:3001"))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> inventoryRoutes() {
+        return GatewayRouterFunctions.route("inventory_service")
+                .route(RequestPredicates.path("/api/inventory/**"), HandlerFunctions.http("http://inventory-service:3002"))
                 .build();
     }
 }
