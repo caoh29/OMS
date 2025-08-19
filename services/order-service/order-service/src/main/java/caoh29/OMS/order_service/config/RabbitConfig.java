@@ -1,9 +1,8 @@
 package caoh29.OMS.order_service.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,5 +29,13 @@ public class RabbitConfig {
     @Bean
     public Binding binding() {
         return BindingBuilder.bind(queue()).to(topicExchange()).with(routingKey);
+    }
+
+    @Bean
+    public AmqpAdmin amqpAdmin(ConnectionFactory connectionFactory) {
+        RabbitAdmin admin = new RabbitAdmin(connectionFactory);
+        // This ensures that queues, exchanges, and bindings are declared at startup
+        admin.setAutoStartup(true);
+        return admin;
     }
 }

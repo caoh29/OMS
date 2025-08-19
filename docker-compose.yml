@@ -190,8 +190,6 @@ services:
         condition: service_healthy
       inventory-service:
         condition: service_healthy
-      notification-service:
-        condition: service_healthy
       rabbitmq:
         condition: service_started
     build:
@@ -206,7 +204,12 @@ services:
       - "3000:3000"
     networks:
       - backend
-  
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   notification-service:
     depends_on:
       eureka-server:
@@ -219,6 +222,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_started
+      order-service:
+        condition: service_healthy
     build:
       context: ./services/notification-service/notification-service
       dockerfile: Dockerfile
