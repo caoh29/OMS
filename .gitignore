@@ -1,2 +1,3 @@
 .qodo/
 pgdata/
+rabbitmq-data/

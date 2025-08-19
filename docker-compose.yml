@@ -118,33 +118,6 @@ services:
       retries: 5
       start_period: 10s
 
-  order-service:
-    depends_on:
-      eureka-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      auth-server-keycloak:
-        condition: service_started
-      api-gateway:
-        condition: service_healthy
-      product-catalog-service:
-        condition: service_healthy
-      inventory-service:
-        condition: service_healthy
-    build:
-      context: ./services/order-service/order-service
-      dockerfile: Dockerfile
-    restart: always
-    environment:
-      - spring.application.name=order-service
-      # - server.port=3000 # This is not needed
-      - spring.config.import=configserver:http://config-server:8888
-    ports:
-      - "3000:3000"
-    networks:
-      - backend
-
   product-catalog-service:
     depends_on:
       eureka-server:
@@ -202,18 +175,82 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  order-service:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
+      api-gateway:
+        condition: service_healthy
+      product-catalog-service:
+        condition: service_healthy
+      inventory-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    build:
+      context: ./services/order-service/order-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=order-service
+      # - server.port=3000 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
   
-  # rabbitmq:
-  #   image: rabbitmq:4-management
-  #   restart: always
-  #   environment:
-  #     - RABBITMQ_DEFAULT_USER=camilo
-  #     - RABBITMQ_DEFAULT_PASS=camilo123
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #   networks:
-  #     - backend
+  notification-service:
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      auth-server-keycloak:
+        condition: service_started
+      api-gateway:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    build:
+      context: ./services/notification-service/notification-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - spring.application.name=notification-service
+      # - server.port=3002 # This is not needed
+      - spring.config.import=configserver:http://config-server:8888
+    ports:
+      - "3003:3003"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  
+  rabbitmq:
+    image: rabbitmq:4-management
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=camilo
+      - RABBITMQ_DEFAULT_PASS=camilo123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - backend
 
 networks:
   backend:

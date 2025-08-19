@@ -22,10 +22,16 @@ public class RestClientConfig {
     private String clientRegistrationId;
 
     @Bean
-    public InventoryClient inventoryClient(OAuth2AuthorizedClientManager authorizedClientManager) {
+    public OAuth2ClientRequestInterceptor oAuth2ClientRequestInterceptor(
+            OAuth2AuthorizedClientManager authorizedClientManager) {
+        return new OAuth2ClientRequestInterceptor(authorizedClientManager, clientRegistrationId);
+    }
+
+    @Bean
+    public InventoryClient inventoryClient(OAuth2ClientRequestInterceptor oAuth2ClientRequestInterceptor) {
         RestClient restClient = RestClient.builder()
                 .baseUrl(inventoryServiceUrl)
-                .requestInterceptor(new OAuth2ClientRequestInterceptor(authorizedClientManager, clientRegistrationId))
+                .requestInterceptor(oAuth2ClientRequestInterceptor)
                 .build();
 
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
