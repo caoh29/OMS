@@ -1,3 +1,4 @@
 .qodo/
 pgdata/
 rabbitmq-data/
+tempo-data/
